@@ -39,5 +39,5 @@ html p {
 }
 EOF;
 
-$css2lessParser = new \Ortic\Css2Less\Css2Less($cssContent);
+$css2lessParser = new \Ortic\CssConverter\CssConverter($cssContent);
 echo $css2lessParser->getLess();

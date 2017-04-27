@@ -1,6 +1,6 @@
 <?php
 
-namespace Ortic\Css2Less\tokens;
+namespace Ortic\CssConverter\tokens;
 
 /**
  * Class LessRule

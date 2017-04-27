@@ -10,7 +10,7 @@
          processIsolation="false"
          syntaxCheck="false">
     <testsuites>
-        <testsuite name="css2less/tests">
+        <testsuite name="CssConverter/tests">
             <directory suffix=".php">./tests/</directory>
         </testsuite>
     </testsuites>

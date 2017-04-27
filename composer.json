@@ -21,7 +21,7 @@
     },
     "autoload": {
         "psr-4": {
-            "Ortic\\Css2Less\\": "src/"
+            "Ortic\\CssConverter\\": "src/"
         }
     },
     "bin": [

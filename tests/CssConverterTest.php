@@ -1,6 +1,6 @@
 <?php
 
-class Css2LessTest extends PHPUnit_Framework_TestCase
+class CssConverterTest extends PHPUnit_Framework_TestCase
 {
     protected function normalizeLineEndings($input)
     {

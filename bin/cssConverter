@@ -5,9 +5,9 @@ require __DIR__ . '/../vendor/autoload.php';
 
 /**
  * Class Css2Less
- * User should give correct permissions to this file: chmod 755 css2less
+ * User should give correct permissions to this file: chmod 755 cssConverter
  */
-class Css2Less
+class CssConverter
 {
     /**
      * @var array holds the command line arguments
@@ -89,7 +89,7 @@ class Css2Less
      */
     protected function showHelp()
     {
-        echo "Usage:\t\n  css2less --css input.css --less output.less\n\n";
+        echo "Usage:\t\n  cssConverter --css input.css --less output.less\n\n";
         echo "Arguments:\n";
         $options = $this->getOptions();
         foreach ($options as $optionKey => $option) {
@@ -137,8 +137,8 @@ class Css2Less
         }
 
         $cssFileContent = file_get_contents($this->cssFileName);
-        $css2lessParser = new \Ortic\Css2Less\Css2Less($cssFileContent);
-        $lessOutput = $css2lessParser->getLess($this->extractVariables);
+        $csslessParser = new \Ortic\CssConverter\CssConverter($cssFileContent);
+        $lessOutput = $csslessParser->getLess($this->extractVariables);
 
         if ($this->lessFileName == '') {
             echo $lessOutput;
@@ -149,4 +149,4 @@ class Css2Less
     }
 }
 
-(new Css2Less($argv))->run();
+(new CssConverter($argv))->run();
