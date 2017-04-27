@@ -8,12 +8,12 @@ use Ortic\CssConverter\tokens\CssRule;
 class CssConverter
 {
     /**
-     * @var string $cssContent
+     * @var string
      */
     protected $cssContent;
 
     /**
-     * @var \CssParser $parser
+     * @var \CssParser
      */
     protected $parser;
 
@@ -25,14 +25,14 @@ class CssConverter
     protected $tokens = [];
 
     /**
-     * Nested tree of nodes
+     * Nested tree of nodes.
      *
      * @var array
      */
     protected $ree = [];
 
     /**
-     * List of CSS rules
+     * List of CSS rules.
      *
      * @var CssRuleList
      */
@@ -47,7 +47,7 @@ class CssConverter
 
     /**
      * Create a new parser object, use parameter to specify CSS you
-     * wish to convert into a LESS or SCSS file
+     * wish to convert into a LESS or SCSS file.
      *
      * @param string $cssContent
      */
@@ -59,7 +59,7 @@ class CssConverter
     }
 
     /**
-     * Iterates through all tokens and extracts the values into variables
+     * Iterates through all Tokens and extracts the values into variables.
      */
     protected function extractVariables()
     {
@@ -74,7 +74,6 @@ class CssConverter
                 $propertyName = str_replace('-', '_', $token->Property);
                 if (!array_key_exists($token->Value, $this->variables[$propertyName])) {
                     $this->variables[$propertyName][$token->Value] = $propertyName . '_' . (count($this->variables[$propertyName]) + 1);
-
                 }
                 $token->Value = '@' . $this->variables[$propertyName][$token->Value];
             }
@@ -90,9 +89,9 @@ class CssConverter
         $this->ruleSetList = new CssRuleList();
 
         foreach ($this->tokens as $token) {
-            // we have to skip some tokens, their information is redundant
-            if ($token instanceof \CssAtMediaStartToken ||
-                $token instanceof \CssAtMediaEndToken
+            // we have to skip some Tokens, their information is redundant
+            if ($token instanceof \CssAtMediaStartToken
+                || $token instanceof \CssAtMediaEndToken
             ) {
                 continue;
             }
@@ -125,6 +124,7 @@ class CssConverter
     public function getVariables()
     {
         $this->extractVariables();
+
         return $this->getVariables();
     }
 }

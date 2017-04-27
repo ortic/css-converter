@@ -1,6 +1,6 @@
 {
-    "name": "ortic/css2less",
-    "description": "css to less converter",
+    "name": "ortic/css-converter",
+    "description": "css to less and scss converter",
     "minimum-stability": "stable",
     "license": "proprietary",
     "authors": [
@@ -16,6 +16,7 @@
     "require-dev": {
         "phpunit/phpunit": "~4.0",
         "satooshi/php-coveralls": "dev-master",
+        "friendsofphp/php-cs-fixer": "^2.3",
         "nette/nette": "~2.1.3",
         "apigen/apigen": "2.8.0"
     },
@@ -25,7 +26,11 @@
         }
     },
     "bin": [
-        "bin/css2less.bat",
-        "bin/css2less"
-    ]
+        "bin/cssConverter.bat",
+        "bin/cssConverter"
+    ],
+    "scripts": {
+        "test": "phpunit",
+        "php-cs-fixer": "vendor/bin/php-cs-fixer fix src"
+    }
 }

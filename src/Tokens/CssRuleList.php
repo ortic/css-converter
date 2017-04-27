@@ -1,31 +1,32 @@
 <?php
 
-namespace Ortic\CssConverter\tokens;
+namespace Ortic\CssConverter\Tokens;
 
 /**
- * Class LessRuleList
- * @package Ortic\Css2Less\tokens
+ * Class CssRuleList.
  */
-class LessRuleList
+class CssRuleList
 {
-    private $list = array();
+    private $list = [];
 
     /**
-     * Add a new rule object to our list
+     * Add a new rule object to our list.
+     *
      * @param LessRule $rule
      */
-    public function addRule(LessRule $rule)
+    public function addRule(CssRule $rule)
     {
         $this->list[] = $rule;
     }
 
     /**
-     * Build and returns a tree for the CSS input
+     * Build and returns a tree for the CSS input.
+     *
      * @return array
      */
     protected function getTree()
     {
-        $output = array();
+        $output = [];
 
         foreach ($this->list as $ruleSet) {
             $selectors = $ruleSet->getSelectors();
@@ -34,6 +35,7 @@ class LessRuleList
                 $this->parseTreeNode($output, $selectors, $token);
             }
         }
+
         return $output;
     }
 
@@ -43,12 +45,14 @@ class LessRuleList
      * additional tree level, we therefore normalize them with the two lines below.
      *
      * @param string $selector
+     *
      * @return string
      */
     protected function parseDirectDescendants($selector)
     {
         $selector = str_replace('> ', '>', $selector);
         $selector = str_replace('>', ' >', $selector);
+
         return $selector;
     }
 
@@ -58,6 +62,7 @@ class LessRuleList
      * ignore every colon if it's wrapped by :not(...) as we don't nest this in LESS.
      *
      * @param string $selector
+     *
      * @return string
      */
     protected function parsePseudoClasses($selector)
@@ -65,8 +70,8 @@ class LessRuleList
         $nestedPseudo = false;
         $lastCharacterColon = false;
         $selectorOut = '';
-        for ($i = 0; $i < strlen($selector); $i++) {
-            $c = $selector{$i};
+        for ($i = 0; $i < strlen($selector); ++$i) {
+            $c = $selector[$i];
 
             // Don't parse anything between (..) and [..]
             $nestedPseudo = ($c === '(' || $c === '[') || $nestedPseudo;
@@ -75,33 +80,33 @@ class LessRuleList
             if ($nestedPseudo === false && $c === ':' && $lastCharacterColon === false) {
                 $selectorOut .= ' &';
                 $lastCharacterColon = true;
-            }
-            else {
+            } else {
                 $lastCharacterColon = false;
             }
 
             $selectorOut .= $c;
         }
+
         return $selectorOut;
     }
 
     /**
-     * Ensures that operators like "+" are properly combined with a "&"
-     * 
-     * @param $selector
+     * Ensures that operators like "+" are properly combined with a "&".
+     *
+     * @param  $selector
      * @param array $characters
+     *
      * @return string
      */
     protected function parseSelectors($selector, array $characters)
     {
         $selectorOut = '';
         $selectorFound = false;
-        for ($i = 0; $i < strlen($selector); $i++) {
-            $c = $selector{$i};
+        for ($i = 0; $i < strlen($selector); ++$i) {
+            $c = $selector[$i];
             if ($c == ' ' && $selectorFound) {
                 continue;
-            }
-            else {
+            } else {
                 $selectorFound = false;
             }
             if (in_array($c, $characters)) {
@@ -115,7 +120,8 @@ class LessRuleList
     }
 
     /**
-     * Parse CSS input part into a LESS node
+     * Parse CSS input part into a LESS node.
+     *
      * @param $output
      * @param $selectors
      * @param $token
@@ -129,7 +135,7 @@ class LessRuleList
         foreach ($token->MediaTypes as $mediaType) {
             // make sure we're aware of our media type
             if (!array_key_exists($mediaType, $output)) {
-                $output[$mediaType] = array();
+                $output[$mediaType] = [];
             }
 
             foreach ($selectors as $selector) {
@@ -145,7 +151,7 @@ class LessRuleList
                 $selectorPath = $this->splitSelector($selector);
                 foreach ($selectorPath as $selectorPathItem) {
                     if (!array_key_exists($selectorPathItem, $currentNode)) {
-                        $currentNode[$selectorPathItem] = array();
+                        $currentNode[$selectorPathItem] = [];
                     }
                     $currentNode = &$currentNode[$selectorPathItem];
                 }
@@ -158,9 +164,10 @@ class LessRuleList
     /**
      * Splits CSS selectors into an array, but only where it makes sense to create a new nested level in LESS/SCSS.
      * We split "body div" into array(body, div), but we don't split "a[title='hello world']" and thus create
-     * array([title='hello world'])
+     * array([title='hello world']).
      *
      * @param string $selector
+     *
      * @return array
      */
     protected function splitSelector($selector)
@@ -169,8 +176,8 @@ class LessRuleList
 
         $currentSelector = '';
         $quoteFound = false;
-        for ($i = 0; $i < strlen($selector); $i++) {
-            $c = $selector{$i};
+        for ($i = 0; $i < strlen($selector); ++$i) {
+            $c = $selector[$i];
 
             if ($c === ' ' && !$quoteFound) {
                 if (trim($currentSelector) != '') {
@@ -181,8 +188,7 @@ class LessRuleList
 
             if ($quoteFound && in_array($c, ['"', '\''])) {
                 $quoteFound = false;
-            }
-            elseif (!$quoteFound && in_array($c, ['"', '\''])) {
+            } elseif (!$quoteFound && in_array($c, ['"', '\''])) {
                 $quoteFound = true;
             }
 
@@ -198,9 +204,11 @@ class LessRuleList
     }
 
     /**
-     * Format LESS nodes in a nicer way with indentation and proper brackets
-     * @param $token
+     * Format LESS nodes in a nicer way with indentation and proper brackets.
+     *
+     * @param  $token
      * @param int $level
+     *
      * @return string
      */
     public function formatTokenAsLess(\aCssToken $token, $level = 0)
@@ -208,21 +216,21 @@ class LessRuleList
         $indentation = str_repeat("\t", $level);
 
         if ($token instanceof \CssRulesetDeclarationToken) {
-            return $indentation . $token->Property . ": " . $token->Value . ($token->IsImportant ? " !important" : "") . ($token->IsLast ? "" : ";");
+            return $indentation . $token->Property . ': ' . $token->Value . ($token->IsImportant ? ' !important' : '') . ($token->IsLast ? '' : ';');
         } elseif ($token instanceof \CssAtKeyframesStartToken) {
-            return $indentation . "@" . $token->AtRuleName . " \"" . $token->Name . "\" {";
+            return $indentation . '@' . $token->AtRuleName . ' "' . $token->Name . '" {';
         } elseif ($token instanceof \CssAtKeyframesRulesetStartToken) {
-            return $indentation . "\t" . implode(",", $token->Selectors) . " {";
+            return $indentation . "\t" . implode(',', $token->Selectors) . ' {';
         } elseif ($token instanceof \CssAtKeyframesRulesetEndToken) {
-            return $indentation . "\t" . "}";
+            return $indentation . "\t" . '}';
         } elseif ($token instanceof \CssAtKeyframesRulesetDeclarationToken) {
-            return $indentation . "\t\t" . $token->Property . ": " . $token->Value . ($token->IsImportant ? " !important" : "") . ($token->IsLast ? "" : ";");
+            return $indentation . "\t\t" . $token->Property . ': ' . $token->Value . ($token->IsImportant ? ' !important' : '') . ($token->IsLast ? '' : ';');
         } elseif ($token instanceof \CssAtCharsetToken) {
-            return $indentation . "@charset " . $token->Charset . ";";
+            return $indentation . '@charset ' . $token->Charset . ';';
         } elseif ($token instanceof \CssAtFontFaceStartToken) {
-            return "@font-face {";
+            return '@font-face {';
         } elseif ($token instanceof \CssAtFontFaceDeclarationToken) {
-            return $indentation . "\t" . $token->Property . ": " . $token->Value . ($token->IsImportant ? " !important" : "") . ($token->IsLast ? "" : ";");
+            return $indentation . "\t" . $token->Property . ': ' . $token->Value . ($token->IsImportant ? ' !important' : '') . ($token->IsLast ? '' : ';');
         } else {
             return $indentation . $token;
         }
@@ -241,13 +249,13 @@ class LessRuleList
                         $return .= $indentation . "\t" . $subNode . "\n";
                     }
                 } else {
-                    $return .= $this->formatAsLess(array($subNodeKey => $subNodes), $level + 1);
+                    $return .= $this->formatAsLess([$subNodeKey => $subNodes], $level + 1);
                 }
             }
 
             $return .= $indentation . "}\n";
-
         }
+
         return $return;
     }
 

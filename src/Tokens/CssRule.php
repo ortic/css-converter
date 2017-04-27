@@ -1,15 +1,14 @@
 <?php
 
-namespace Ortic\CssConverter\tokens;
+namespace Ortic\CssConverter\Tokens;
 
 /**
- * Class LessRule
- * @package Ortic\Css2Less\tokens
+ * Class LessRule.
  */
-class LessRule
+class CssRule
 {
-    private $selectors = array();
-    private $tokens = array();
+    private $selectors = [];
+    private $tokens = [];
 
     /**
      * @param $selectors
@@ -20,7 +19,8 @@ class LessRule
     }
 
     /**
-     * Add new node to rule
+     * Add new node to rule.
+     *
      * @param $token
      */
     public function addToken($token)
@@ -29,7 +29,8 @@ class LessRule
     }
 
     /**
-     * Returns the list of selectors (e.g. #logo img)
+     * Returns the list of selectors (e.g. #logo img).
+     *
      * @return array
      */
     public function getSelectors()
@@ -38,7 +39,8 @@ class LessRule
     }
 
     /**
-     * Returns a list of tokens/nodes for the current selector
+     * Returns a list of Tokens/nodes for the current selector.
+     *
      * @return array
      */
     public function getTokens()

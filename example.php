@@ -39,5 +39,6 @@ html p {
 }
 EOF;
 
-$css2lessParser = new \Ortic\CssConverter\CssConverter($cssContent);
-echo $css2lessParser->getLess();
+$cssConverter = new \Ortic\CssConverter\CssConverter($cssContent);
+$tree = $cssConverter->getTree();
+print_r($tree);
