@@ -36,8 +36,8 @@ class CssConverterTest extends PHPUnit_Framework_TestCase
      */
     public function testSnippets($css, $less, $extractVariables)
     {
-        $css2lessParser = new \Ortic\Css2Less\Css2Less($css);
-        $lessOutput = $css2lessParser->getLess($extractVariables);
+        $cssConverter = new \Ortic\CssConverter\CssConverter($css);
+        $lessOutput = (new \Ortic\CssConverter\LessLayouter($cssConverter, $extractVariables))->render();
 
         $lessOutput = $this->normalizeLineEndings($lessOutput);
         $lessContent = $this->normalizeLineEndings($less);
@@ -129,9 +129,8 @@ body {
 
 EOF;
 
-
-        $css2lessParser = new \Ortic\Css2Less\Css2Less($cssContent);
-        $lessOutput = $css2lessParser->getLess();
+        $cssConverter = new \Ortic\CssConverter\CssConverter($cssContent);
+        $lessOutput = (new \Ortic\CssConverter\LessLayouter($cssConverter, false))->render();
 
         $lessOutput = $this->normalizeLineEndings($lessOutput);
         $lessContent = $this->normalizeLineEndings($lessContent);

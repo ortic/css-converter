@@ -25,25 +25,13 @@ class CssConverter
     protected $tokens = [];
 
     /**
-     * Nested tree of nodes.
-     *
-     * @var array
-     */
-    protected $ree = [];
-
-    /**
      * List of CSS rules.
      *
      * @var CssRuleList
      */
     protected $ruleSetList;
 
-    /**
-     * Variables.
-     *
-     * @var array
-     */
-    protected $variables = [];
+    protected $tree = [];
 
     /**
      * Create a new parser object, use parameter to specify CSS you
@@ -56,31 +44,51 @@ class CssConverter
         $this->cssContent = $cssContent;
         $this->parser = new \CssParser($this->cssContent);
         $this->tokens = $this->parser->getTokens();
+        $this->ruleSetList = new CssRuleList();
+        $this->buildTree();
     }
 
     /**
      * Iterates through all Tokens and extracts the values into variables.
      */
-    protected function extractVariables()
+/*    public function getVariables()
     {
+        $variables = [];
         $properties = ['color', 'font-family', 'background-color', 'border-color', 'border-top-color', 'border-right-color', 'border-bottom-color', 'border-left-color', 'outline-color'];
         foreach ($properties as $property) {
             $propertyName = str_replace('-', '_', $property);
-            $this->variables[$propertyName] = [];
+            $variables[$propertyName] = [];
         }
 
         foreach ($this->tokens as $token) {
             if ($token instanceof \CssRulesetDeclarationToken && in_array($token->Property, $properties)) {
                 $propertyName = str_replace('-', '_', $token->Property);
-                if (!array_key_exists($token->Value, $this->variables[$propertyName])) {
-                    $this->variables[$propertyName][$token->Value] = $propertyName . '_' . (count($this->variables[$propertyName]) + 1);
+                if (!array_key_exists($token->Value, $variables[$propertyName])) {
+                    $variables[$propertyName][$token->Value] = $propertyName . '_' . (count($variables[$propertyName]) + 1);
                 }
-                $token->Value = '@' . $this->variables[$propertyName][$token->Value];
+                $token->Value = '@' . $variables[$propertyName][$token->Value];
             }
         }
-    }
+
+        return $variables;
+    }*/
 
     public function getTree()
+    {
+        return $this->tree;
+    }
+
+    public function getRuleSet()
+    {
+        return $this->ruleSetList;
+    }
+
+    public function getTokens()
+    {
+        return $this->tokens;
+    }
+
+    public function buildTree()
     {
         // this variable is true, if we're within a ruleset, e.g. p { .. here .. }
         // we have to normalize them
@@ -90,9 +98,7 @@ class CssConverter
 
         foreach ($this->tokens as $token) {
             // we have to skip some Tokens, their information is redundant
-            if ($token instanceof \CssAtMediaStartToken
-                || $token instanceof \CssAtMediaEndToken
-            ) {
+            if ($token instanceof \CssAtMediaStartToken || $token instanceof \CssAtMediaEndToken) {
                 continue;
             }
 
@@ -117,14 +123,6 @@ class CssConverter
                 }
             }
         }
-
-        return $this->tree;
     }
 
-    public function getVariables()
-    {
-        $this->extractVariables();
-
-        return $this->getVariables();
-    }
 }

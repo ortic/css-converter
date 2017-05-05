@@ -30,7 +30,6 @@ html p {
     @font-face {
         font-family: "CrassRoots";
     }
-
 }
 
 @keyframes mymove {
@@ -40,5 +39,5 @@ html p {
 EOF;
 
 $cssConverter = new \Ortic\CssConverter\CssConverter($cssContent);
-$tree = $cssConverter->getTree();
-print_r($tree);
+$less = (new \Ortic\CssConverter\LessLayouter($cssConverter, false))->render();
+print_r($less);
