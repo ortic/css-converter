@@ -41,6 +41,8 @@ class CssConverter
      */
     public function __construct($cssContent)
     {
+        // @TODO hacky fix to get around a cssmin bug
+        $cssContent = str_replace('@media(', '@media (', $cssContent);
         $this->cssContent = $cssContent;
         $this->parser = new \CssParser($this->cssContent);
         $this->tokens = $this->parser->getTokens();
